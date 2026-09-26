@@ -56,7 +56,6 @@ def generate_report(total_units, failed_attempts, history):
 def load_inventory():
     try:
         with open("inventory.txt", "r") as file:
-            # Reads the next available line and converts it to integer
             total_line = file.readline().strip()
 
             if total_line:
