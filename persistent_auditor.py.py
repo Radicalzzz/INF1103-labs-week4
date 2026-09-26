@@ -39,6 +39,19 @@ def generate_report(total_units, failed_attempts):
     print("Total Units Processed:", total_units)
     print("Number of Failed/Rejected Entries:", failed_attempts)
 
+def load_inventory():
+    try:
+        with open("inventory.txt", "r") as file:
+            inventory = int(file.readline().strip())
+            return inventory
+
+    except FileNotFoundError:
+        print("File does not Exist")
+
+inventory = load_inventory()
+
+print(inventory)
+
 while True:
     # Get input from user
     user_input = get_valid_input()
