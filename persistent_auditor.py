@@ -2,6 +2,7 @@
 inventory = 0
 entries = 0
 rejected_entries = 0
+transaction_history = []
 
 # Function of user input. Handles prompt, input validation and return a valid integer.
 def get_valid_input():
@@ -42,15 +43,24 @@ def generate_report(total_units, failed_attempts):
 def load_inventory():
     try:
         with open("inventory.txt", "r") as file:
-            inventory = int(file.readline().strip())
-            return inventory
+            # Reads the next available line and converts it to integer
+            total_file = int(file.readline().strip())
+
+            history_line = file.readline().strip()
+
+            if history_line:
+                history = [int(value) for value in history_line.split(",")]
+            else:
+                history = []
+            return  total_file, history
 
     except FileNotFoundError:
-        print("File does not Exist")
+        return 0, []
 
-inventory = load_inventory()
+def save_inventory():
+    pass
 
-print(inventory)
+inventory, transaction_history = load_inventory()
 
 while True:
     # Get input from user
@@ -63,6 +73,9 @@ while True:
 
     # Process the delivery
     inventory = process_delivery(inventory, user_input)
+
+    # Store the transaction in history
+    transaction_history.append(user_input)
 
     # Calcuating the tax
     tax = calculate_tax(user_input)
@@ -79,3 +92,6 @@ while True:
         print("Inventory exceeds 500 units.")
         generate_report(inventory, rejected_entries)
         break
+
+print(inventory)
+print(transaction_history)
