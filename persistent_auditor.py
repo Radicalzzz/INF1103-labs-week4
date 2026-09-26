@@ -49,7 +49,7 @@ def generate_report(total_units, failed_attempts, history):
         orders[order_id].append(quantity)
 
     for order_id, quantities in orders.items():
-        print(f"{order_id}, " + ", ".join(str(quantity) for quantity in quantities))
+        print(f"ID: {order_id}, " + ", ".join(str(quantity) for quantity in quantities))
 
     print("Number of Failed/Rejected Entries:", failed_attempts)
 
