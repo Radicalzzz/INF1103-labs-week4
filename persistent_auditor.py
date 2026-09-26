@@ -35,16 +35,22 @@ def calculate_tax(amount):
     return amount
 
 # Function to print final summary
-def generate_report(total_units, failed_attempts):
+def generate_report(total_units, failed_attempts,history):
     print("\n--- Final Summary --- ")
     print("Total Units Processed:", total_units)
+    print("Transaction History:", history)
     print("Number of Failed/Rejected Entries:", failed_attempts)
 
 def load_inventory():
     try:
         with open("inventory.txt", "r") as file:
             # Reads the next available line and converts it to integer
-            total_file = int(file.readline().strip())
+            total_line = file.readline().strip()
+
+            if total_line:
+                total_file = int(total_line)
+            else:
+                total_file = 0
 
             history_line = file.readline().strip()
 
@@ -52,13 +58,18 @@ def load_inventory():
                 history = [int(value) for value in history_line.split(",")]
             else:
                 history = []
+                
             return  total_file, history
 
     except FileNotFoundError:
+        # inventory = 0, transaction_history is a list
         return 0, []
 
-def save_inventory():
-    pass
+def save_inventory(total_units, history):
+    with open("inventory.txt", "w") as file:
+        # Converts [100, 100, 200] into 100,100,200 for inventory.txt
+        file.write(str(total_units) + "\n")
+        file.write(",".join(str(value) for value in history))
 
 inventory, transaction_history = load_inventory()
 
@@ -68,7 +79,9 @@ while True:
 
     # Stop program if user enters "exit"
     if user_input == "exit":
-        generate_report(inventory, rejected_entries)
+        save_inventory(inventory, transaction_history)
+        generate_report(inventory, rejected_entries, transaction_history)
+        print("Inventory successfully saved")
         break
 
     # Process the delivery
@@ -76,6 +89,9 @@ while True:
 
     # Store the transaction in history
     transaction_history.append(user_input)
+
+    # Save immediately after every transaction
+    save_inventory(inventory, transaction_history)
 
     # Calcuating the tax
     tax = calculate_tax(user_input)
@@ -90,8 +106,5 @@ while True:
 
     if inventory > 500:
         print("Inventory exceeds 500 units.")
-        generate_report(inventory, rejected_entries)
+        generate_report(inventory, rejected_entries, transaction_history)
         break
-
-print(inventory)
-print(transaction_history)
